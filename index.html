@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nossa Lista de Compras 🛒</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e0eaff 0%, #fce4f3 100%);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 3rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header .emoji {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #3b82f6, #a855f7, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.35rem;
+    }
+
+    .header p {
+      font-size: 0.95rem;
+      color: #6b7280;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 2rem 1.75rem;
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.10), 0 2px 8px rgba(236, 72, 153, 0.08);
+    }
+
+    .field {
+      margin-bottom: 1.25rem;
+    }
+
+    .field label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #6b7280;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.45rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-blue   { background: #3b82f6; }
+    .dot-pink   { background: #ec4899; }
+    .dot-purple { background: #a855f7; }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 0.7rem 1rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      color: #1f2937;
+      background: #f9fafb;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      background: #fff;
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      background: linear-gradient(135deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%);
+      color: #fff;
+      margin-top: 0.5rem;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.02em;
+    }
+
+    .btn:hover  { opacity: 0.9; transform: scale(1.01); }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .msg {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+    .msg.success { background: #d1fae5; color: #065f46; display: block; }
+    .msg.error   { background: #fee2e2; color: #991b1b; display: block; }
+
+    .footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.82rem;
+      color: #9ca3af;
+    }
+    .footer span { color: #ec4899; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="emoji">🛒</span>
+      <h1>Nossa Lista de Compras</h1>
+      <p>Adicione um item para o casal conferir</p>
+    </div>
+
+    <div class="card">
+      <div class="field">
+        <label><span class="dot dot-blue"></span>Produto</label>
+        <input type="text" id="produto" placeholder="Ex: Leite integral, Arroz 5kg…" />
+      </div>
+
+      <div class="field">
+        <label><span class="dot dot-pink"></span>Quantidade</label>
+        <input type="text" id="quantidade" placeholder="Ex: 2 unidades, 1 pacote…" />
+      </div>
+
+      <div class="field">
+        <label><span class="dot dot-purple"></span>Observação</label>
+        <textarea id="observacao" placeholder="Ex: Comprar na promoção, marca preferida…"></textarea>
+      </div>
+
+      <button class="btn" id="btn-enviar" onclick="enviar()">✨ Adicionar à lista</button>
+      <div class="msg" id="msg"></div>
+    </div>
+
+    <p class="footer">Feito com <span>♥</span> para vocês dois</p>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxj2Jh-vrl9K_QLqISiboTdPqTajVeZ1_p1spfkw5DmgnSGdIciTM0cwmTJIM-5exj9/exec";
+
+    async function enviar() {
+      const produto    = document.getElementById("produto").value.trim();
+      const quantidade = document.getElementById("quantidade").value.trim();
+      const observacao = document.getElementById("observacao").value.trim();
+      const btn        = document.getElementById("btn-enviar");
+      const msg        = document.getElementById("msg");
+
+      if (!produto) {
+        mostrarMsg("Por favor, preencha o nome do produto.", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Enviando…";
+      msg.className = "msg";
+      msg.style.display = "none";
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ produto, quantidade, observacao })
+        });
+
+        mostrarMsg("✅ Item adicionado à lista com sucesso!", "success");
+        document.getElementById("produto").value    = "";
+        document.getElementById("quantidade").value = "";
+        document.getElementById("observacao").value = "";
+      } catch (e) {
+        mostrarMsg("Erro ao enviar. Verifique sua conexão.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "✨ Adicionar à lista";
+      }
+    }
+
+    function mostrarMsg(texto, tipo) {
+      const msg = document.getElementById("msg");
+      msg.textContent = texto;
+      msg.className = "msg " + tipo;
+    }
+  </script>
+</body>
+</html>
